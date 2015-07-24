@@ -1,37 +1,20 @@
 package evolver;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.text.DateFormatter;
-
-import com.sun.org.apache.xerces.internal.impl.dv.dtd.NMTOKENDatatypeValidator;
 
 import evaluators.GRNGenomeEvaluator;
-import evaluators.GRNSinusEvaluator;
-import evaluators.GRNStableMediumOutputEvaluator;
 import evaluators.IntertwinedSpiralsSubsequence;
 import evaluators.IntertwinedSpiralsVariableTime;
-import evaluators.MichalSignalProcessExp1;
 import evaluators.DoublingFrequencyEvaluator;
-import evaluators.MichalSignalProcessExp1;
-import evaluators.MichalSignalProcessExp2;
-import evaluators.MichalSignalProcessExp3;
-import evaluators.NMMultirobotCCP;
-import evaluators.PingPrediction;
-import evaluators.RadbotEvaluator;
-import evaluators.RetinaEvaluator;
+import evaluators.LowPassFilterEvaluator;
 import evaluators.CoverageControl;
 import evaluators.IntertwinedSpirals;
-import evaluators.IntertwinedSpiralsVariableTime;
-import evaluators.WeatherPrediction;
 import grn.GRNProtein;
 import operators.GRNAddGeneMutationOperator;
 import operators.GRNAligningCrossoverOperator_ParentCountProb;
@@ -60,15 +43,15 @@ public class Evolver {
 	public GRNGenomeEvaluator evaluator=null;
 	public int populationSize = 500;
 	public double speciationThreshold = 0.15;
-	public double crossoverRate = 0.6;
-	public double mutationRate = 0.3;//10714;
+	public double crossoverRate = 0.25;
+	public double mutationRate = 0.75;
 	public int speciesMinSize=15;
 	public int duplicateInit = (int)(speciesMinSize*2);
 	public int nMaxTries=10;
 	public int tournamentSize=3;
 	public boolean saveAllPopulation=false;
 	public String folderName;
-	public String experienceName="SignalProcessingExp2";
+	public String experienceName="DoublingFrequencyEvaluator";
 	public boolean greatInit=true;
 	public boolean greatActivated=true;
 	public int representativeMethod=1;// 0=keep the originator of the species, 1=random from prev gen, 2=best from prev gen
@@ -91,7 +74,6 @@ public class Evolver {
 	}
 	
 	public void run() {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 		uuid = System.nanoTime();
 		folderName=experienceName+"/run_"+uuid;//dateFormat.format(new Date());
 		try {
@@ -193,7 +175,6 @@ public class Evolver {
 				for (int i=0; i<species.size(); i++) {
 					Species s=species.get(i);
 					sumAdjFit[i]=0;
-					double bestFitness=s.getBestFitness();
 					for (GRNGenome gi : s.getGenomes()) {
 						double sh=0;
 						for (GRNGenome gj : s.getGenomes()) {
@@ -603,9 +584,9 @@ public class Evolver {
 		
 		int xover = 1;
 		
-		double addMutationProb=0.33;
-		double delMutationProb=0.33;
-		double changeMutationProb=0.33;
+		double addMutationProb=0.5;
+		double delMutationProb=0.25;
+		double changeMutationProb=0.25;
 		int addMutationMaxSize=Integer.MAX_VALUE;
 		int delMutationMinSize=0;
 		
@@ -649,7 +630,7 @@ public class Evolver {
 			} else if (args[k].compareTo("duplicateInit")==0) {
 				e.duplicateInit=Integer.parseInt(args[k+1]);
 			} else if (args[k].compareTo("verbose")==0) {
-				e.verbose=Integer.parseInt(args[k+1]);
+				Evolver.verbose=Integer.parseInt(args[k+1]);
 			} else if (args[k].compareTo("addMutationProbability")==0) {
 				addMutationProb=Double.parseDouble(args[k+1]);
 			} else if (args[k].compareTo("deleteMutationProbability")==0) {
@@ -672,17 +653,12 @@ public class Evolver {
 			e.experienceName=e.evaluator.name;
 		} else {
 			if( e.experienceName.compareTo("DoublingFrequencyEvaluator") == 0) e.evaluator=new DoublingFrequencyEvaluator();  
-			else if( e.experienceName.compareTo("MichalSignalProcessExp1") == 0 ) e.evaluator=new MichalSignalProcessExp1();  
-			else if( e.experienceName.compareTo("MichalSignalProcessExp2") == 0 ) e.evaluator=new MichalSignalProcessExp2();  
-			else if( e.experienceName.compareTo("MichalSignalProcessExp3") == 0 ) e.evaluator=new MichalSignalProcessExp3();  
+			else if( e.experienceName.compareTo("LowPassFilter") == 0 ) e.evaluator=new LowPassFilterEvaluator();  
 			else if( e.experienceName.compareTo("CoverageControl") == 0 ) e.evaluator=new CoverageControl( args, e.rng );  
 			else if( e.experienceName.compareTo("IntertwinedSpirals") == 0 ) e.evaluator=new IntertwinedSpirals( args );
 			else if( e.experienceName.compareTo("IntertwinedSpiralsSubsequence") == 0 ) e.evaluator=new IntertwinedSpiralsSubsequence();
 			else if( e.experienceName.compareTo("IntertwinedSpiralsVariableTime") == 0 ) e.evaluator=new IntertwinedSpiralsVariableTime( args );
-			else if( e.experienceName.compareTo("WeatherPrediction") == 0 ) e.evaluator=new WeatherPrediction(1);
-			else if( e.experienceName.compareTo("Radbot") == 0 ) e.evaluator=new RadbotEvaluator();
-			else if( e.experienceName.compareTo("PingPrediction") == 0 ) e.evaluator=new PingPrediction(0);
-			//e.experienceName=e.evaluator.name;
+			else System.out.println("!!! WARNING: Unknown experience name "+e.experienceName+" !!!");
 		}
 		
 		if (e.greatActivated) {

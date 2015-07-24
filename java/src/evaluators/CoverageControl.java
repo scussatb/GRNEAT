@@ -1,6 +1,5 @@
 package evaluators;
 
-import evolver.Evolver;
 import evolver.GRNGenome;
 import grn.GRNModel;
 
@@ -8,15 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Random;
-
-import operators.GRNAddGeneMutationOperator;
-import operators.GRNAligningCrossoverOperator;
-import operators.GRNDeleteGeneMutationOperator;
-import operators.GRNGeneMutationOperator;
 
 // Pardon the lack of style
 public class CoverageControl extends GRNGenomeEvaluator {
@@ -52,7 +43,6 @@ public class CoverageControl extends GRNGenomeEvaluator {
 		numGRNInputs = 9;
 		numGRNOutputs = 4;
 		long random_seed = 1;
-		boolean parameterSampling = false;
 		//		mapID = rng.nextInt( 100 );// there are 100 maps
 		mapIDs=new boolean[maxMaps];
 		for (int k = 0; k < args.length; k++ ) {
@@ -329,9 +319,6 @@ public class CoverageControl extends GRNGenomeEvaluator {
 				maxAction = ag.grn.proteins.get(features.length + 1 + aid).concentration;
 			}	    	
 		}
-
-		//    Reinforcement is 0. Prediction of failure given by v weight.
-		double reward = ag.current_reward;
 
 		ag.action = mAid;
 		//ag.state_idx = state_idx;

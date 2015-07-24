@@ -2,9 +2,6 @@ package grn;
 
 import java.io.Serializable;
 
-import evolver.GRNGene;
-
-
 public class GRNProtein implements Serializable {
 	private static final long serialVersionUID = 1L;
 

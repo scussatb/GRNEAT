@@ -4,7 +4,7 @@ import java.util.Random;
 
 import grn.GRNProtein;
 
-public class GRNGene implements Comparable {
+public class GRNGene implements Comparable<Object> {
 	public double protCoef=0.75;
 	public double enhCoef=0.125;
 	public double inhCoef=0.125;

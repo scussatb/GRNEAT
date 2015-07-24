@@ -295,9 +295,7 @@ public class IntertwinedSpiralsVariableTime extends GRNGenomeEvaluator {
 												    (int) (y/dy) + my ) );					
 					
 					//System.out.println( "Marker " + markx + "," + marky );
-					
-					int currpix = 255;//img.getRGB( markx, marky);					
-					
+										
 					img.setRGB( markx, marky, pixel );// & currpix );
 				}
 			}

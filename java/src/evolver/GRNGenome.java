@@ -2,14 +2,13 @@ package evolver;
 
 import grn.GRNProtein;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
-public class GRNGenome implements Comparable {	
+public class GRNGenome implements Comparable<Object> {	
 	protected Hashtable<Integer, GRNGene> inputGenes;
 	protected Hashtable<Integer, GRNGene> outputGenes;
 	protected Hashtable<Long, GRNGene> regulatoryGenes;

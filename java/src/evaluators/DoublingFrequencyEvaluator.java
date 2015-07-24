@@ -96,7 +96,6 @@ public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 	}
 	
 	double evolveGRN_expE(GRNModel grn, boolean printTrace) {
-		double fitness=0.0;
 		
 		grn.reset();
 		grn.evolve(25);
@@ -150,7 +149,6 @@ public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 		if (printTrace) {
 			System.out.println(nbEvents+"  "+ S+ "  " +nbEventDesired);
 		}
-		fitness*=1.0/(1.0+S);
 
 		//System.err.println("fitness="+fitness+"  =>  "+grn.toString());
 		return 0;
@@ -197,8 +195,6 @@ public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 				"grn_400_-26.640982270052017.grn",	"grn_400_-48.65906720712924.grn",	"grn_400_-87.02573938628746.grn",
 				"grn_400_-27.986204483660597.grn",	"grn_400_-51.23359974959173.grn",
 		};
-		double greatAvg[]=new double[greatGRN.length+1];
-		double gaAvg[]=new double[gaGRN.length+1];
 		for (int i=0; i<greatGRN.length; i++) {
 			greatGRN[i]=GRNModel.loadFromFile("/Users/cussat/Recherche/Projets/grnNEAT/GREAT_GIT/launcher016-hyperion006/Generalization/DF/GREAT/"+greatFiles[i]);
 			gaGRN[i]=GRNModel.loadFromFile("/Users/cussat/Recherche/Projets/grnNEAT/GREAT_GIT/launcher016-hyperion006/Generalization/DF/GA/"+gaFiles[i]);

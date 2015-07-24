@@ -6,7 +6,6 @@ import evolver.GRNGene;
 import evolver.GRNGenome;
 import grn.GRNModel;
 import grn.GRNProtein;
-import grn.PopGRNModel;
 
 public abstract class GRNGenomeEvaluator {
 	public int generation=0;// some evaluators are dynamic problems dependent on generation number
@@ -20,7 +19,7 @@ public abstract class GRNGenomeEvaluator {
 	
 	public abstract double evaluate(GRNGenome aGenome);
 	
-	public PopGRNModel buildGRNFromGenome(GRNGenome aGenome) {
+	public GRNModel buildGRNFromGenome(GRNGenome aGenome) {
 		Vector<GRNProtein> prots=new Vector<GRNProtein>();
 		for (GRNGene gi : aGenome.getInputGenes()) {
 			prots.add(gi.getProtein());
@@ -31,7 +30,7 @@ public abstract class GRNGenomeEvaluator {
 		for (GRNGene gr : aGenome.getRegulatoryGenes()) {
 			prots.add(gr.getProtein());
 		}
-		PopGRNModel p=new PopGRNModel(prots, aGenome.getBeta(), aGenome.getDelta());
+		GRNModel p=new GRNModel(prots, aGenome.getBeta(), aGenome.getDelta());
 		return p;
 	}
 

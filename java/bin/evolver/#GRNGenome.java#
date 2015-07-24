@@ -1,0 +1,221 @@
+package evolver;
+
+import grn.GRNProtein;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+
+public class GRNGenome implements Comparable {
+	protected Hashtable<Integer, GRNGene> inputGenes;
+	protected Hashtable<Integer, GRNGene> outputGenes;
+	protected Hashtable<Integer, GRNGene> regulatoryGenes;
+	protected Hashtable<Integer, GRNGene> allGenes;
+	
+	protected boolean hasBeenEvaluated=false;
+	protected double lastFitnessValue;
+	protected double adjustedFitness;
+		
+	public GRNGenome() {
+		inputGenes=new Hashtable<Integer, GRNGene>();
+		outputGenes=new Hashtable<Integer, GRNGene>();
+		regulatoryGenes=new Hashtable<Integer, GRNGene>();
+		allGenes=new Hashtable<Integer, GRNGene>();
+	}
+	
+	public GRNGenome(Enumeration<GRNGene> nGenes) {
+		this();
+		while (nGenes.hasMoreElements()) {
+			addGene(nGenes.nextElement());
+		}
+	}
+	
+	public GRNGenome(List<GRNGene> nGenes) {
+		this();
+		for (GRNGene g : nGenes) {
+			addGene(g);
+		}
+	}
+	
+	public void addGene(GRNGene nGene) {
+		GRNGene nGeneClone=nGene.clone();
+		switch (nGeneClone.protType) {
+		case GRNProtein.INPUT_PROTEIN:
+			inputGenes.put(nGeneClone.getConnectTo(), nGeneClone);
+			break;
+		case GRNProtein.OUTPUT_PROTEIN:
+			outputGenes.put(nGeneClone.getConnectTo(), nGeneClone);
+			break;
+		case GRNProtein.REGULATORY_PROTEIN:
+			regulatoryGenes.put(nGeneClone.getId(), nGeneClone);
+			break;
+		}
+		allGenes.put(nGeneClone.getId(), nGeneClone);
+		hasBeenEvaluated=false;
+	}
+
+	public int compareTo(Object o) {
+		if (o instanceof GRNGenome) {
+			GRNGenome genome2 = (GRNGenome) o;
+			int distance=0;
+			// comparing inputs
+			for (GRNGene gi1 : inputGenes.values()) {
+				for (GRNGene gi2 : genome2.inputGenes.values()) {
+					if (gi1.compareTo(gi2)!=0) {
+						distance++;
+					}
+				}
+			}
+			// comparing outputs
+			for (GRNGene go1 : outputGenes.values()) {
+				for (GRNGene go2 : genome2.outputGenes.values()) {
+					if (go1.compareTo(go2)!=0) {
+						distance++;
+					}
+				}
+			}
+			// comparing regulatories
+			for (GRNGene gr1 : regulatoryGenes.values()) {
+				for (GRNGene gr2 : genome2.regulatoryGenes.values()) {
+					if (gr1.compareTo(gr2)!=0) {
+						distance++;
+					}
+				}
+			}
+			
+			return distance;
+		} else {
+			return Integer.MAX_VALUE;
+		}
+	}
+	
+	public double distanceTo(GRNGenome g) {
+		double distance=0;
+		// comparing inputs
+		for (GRNGene gi1 : inputGenes.values()) {
+			for (GRNGene gi2 : g.inputGenes.values()) {
+				distance+=gi1.distanceTo(gi2);
+			}
+		}
+		// comparing outputs
+		for (GRNGene go1 : outputGenes.values()) {
+			for (GRNGene go2 : g.outputGenes.values()) {
+				distance+=go1.distanceTo(go2);
+			}
+		}
+		// comparing regulatories
+		for (GRNGene gr1 : regulatoryGenes.values()) {
+			for (GRNGene gr2 : g.regulatoryGenes.values()) {
+				distance+=gr1.distanceTo(gr2);
+			}
+		}
+		return ((double)distance)/Math.max(this.allGenes.size(), g.allGenes.size());
+	}
+
+	public GRNGenome clone() {
+		return new GRNGenome(allGenes.elements());
+	}
+
+	public double getLastFitness() {
+		return lastFitnessValue;
+	}
+	
+	public void setNewFitness(double aFitness) {
+		this.lastFitnessValue=aFitness;
+		hasBeenEvaluated=true;
+	}
+	
+	public boolean hasBeenEvaluated() {
+		return hasBeenEvaluated;
+	}
+	
+	public GRNGene containsGene(GRNGene aGene) {
+		return allGenes.get(aGene.getId());
+	}
+	
+	public GRNGene containsGene(Integer geneId) {
+		return allGenes.get(geneId);
+	}
+	
+	public GRNGene getInputGeneConnectTo(Integer sensorId) {
+		return inputGenes.get(sensorId);
+	}
+	
+	public GRNGene getOutputGeneConnectTo(Integer outputId) {
+		return outputGenes.get(outputId);
+	}
+	
+	public Collection<GRNGene> getInputGenes() {
+		return inputGenes.values();
+	}
+	
+	public Collection<GRNGene> getOutputGenes() {
+		return outputGenes.values();
+	}
+	
+	public Collection<GRNGene> getRegulatoryGenes() {
+		return regulatoryGenes.values();
+	}
+	
+	public Collection<GRNGene> getAllGenes() {
+		return allGenes.values();
+	}
+	
+	public int size() {
+		return allGenes.size();
+	}
+	
+	public String toString() {
+		String res="";
+		for (GRNGene g : allGenes.values()) {
+			res+=g.toString();
+		}
+		return res;
+	}
+	
+	public void removeAllGenes() {
+		hasBeenEvaluated=false;
+		allGenes.clear();
+	}
+	
+	public void removeGene(GRNGene g) {
+		switch (g.protType) {
+		case GRNProtein.INPUT_PROTEIN:
+			inputGenes.remove(g.connectTo);
+			break;
+		case GRNProtein.OUTPUT_PROTEIN:
+			inputGenes.remove(g.connectTo);
+			break;
+		case GRNProtein.REGULATORY_PROTEIN:
+			inputGenes.remove(g.getId());
+			break;
+		}
+		allGenes.remove(g.getId());
+		hasBeenEvaluated=false;
+	}
+	
+	public boolean removeRandomlyRegulatoryGene() {
+		if (regulatoryGenes.size()==0) return false;
+		int deleteIndex=(int)(Math.random()*regulatoryGenes.size());
+		GRNGene g=(GRNGene)regulatoryGenes.values().toArray()[deleteIndex];
+		removeGene(g);
+		hasBeenEvaluated=false;
+		return true;
+	}
+	
+	public double getAdjustedFitness() {
+		return adjustedFitness;
+	}
+	
+	public void setAdjustedFitness(double nAdjFit) {
+		adjustedFitness=nAdjFit;
+	}
+	
+	public void hasBeenModified() {
+		hasBeenEvaluated=false;
+	}
+
+
+}

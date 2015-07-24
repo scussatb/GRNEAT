@@ -2,7 +2,6 @@ package evaluators;
 
 import evolver.GRNGenome;
 import grn.GRNModel;
-import grn.PopGRNModel;
 
 public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 	double coef=3.0;
@@ -15,7 +14,7 @@ public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 
 	@Override
 	public double evaluate(GRNGenome aGenome) {
-		PopGRNModel grn=buildGRNFromGenome(aGenome);
+		GRNModel grn=buildGRNFromGenome(aGenome);
 		double fitness=evolveGRN(grn, false, 125.0, 1000)+
 				evolveGRN(grn, false, 500, 1000)+
 				evolveGRN_zero(grn, false, 1000);
@@ -27,7 +26,7 @@ public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 		return fitness;
 	}
 	
-	double evolveGRN_zero(PopGRNModel grn, boolean printTrace, int nStepMax) {
+	double evolveGRN_zero(GRNModel grn, boolean printTrace, int nStepMax) {
 		double fitness=0.0;
 		
 		grn.reset();
@@ -51,7 +50,7 @@ public class DoublingFrequencyEvaluator extends GRNGenomeEvaluator {
 		
 	}
 	
-	double evolveGRN(PopGRNModel grn, boolean printTrace, double halfFreq, int nStepMax) {
+	double evolveGRN(GRNModel grn, boolean printTrace, double halfFreq, int nStepMax) {
 		double fitness=0.0;
 		
 		grn.reset();

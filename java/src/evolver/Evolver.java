@@ -75,9 +75,16 @@ public class Evolver {
 	
 	public void run() {
 		uuid = System.nanoTime();
-		folderName=experienceName+"/run_"+uuid;//dateFormat.format(new Date());
-		try {
-			Runtime.getRuntime().exec("mkdir "+experienceName+" "+folderName);
+		folderName=experienceName+ java.io.File.separator +"run_"+uuid;//dateFormat.format(new Date());
+		
+		if( !( new java.io.File( experienceName ).mkdir() ) )
+			System.out.println( "Failed to create directory: " + experienceName );
+		if( !( new java.io.File( folderName ).mkdir() ) )
+			System.out.println( "Failed to create directory: " + folderName );
+		
+		
+		try {							
+			//Runtime.getRuntime().exec("mkdir "+experienceName+" "+folderName);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -438,7 +445,7 @@ public class Evolver {
 			}
 		}
 		try {
-			evaluator.buildGRNFromGenome(bestGenome).writeToFile(folderName+"/grn_"+currentGen+"_"+fitMax+".grn");
+			evaluator.buildGRNFromGenome(bestGenome).writeToFile(folderName+java.io.File.separator+"grn_"+currentGen+"_"+fitMax+".grn");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -447,35 +454,44 @@ public class Evolver {
 	protected void saveAllPopulation() {
 		try {
 			// making population directory
-			Runtime.getRuntime().exec("mkdir "+folderName+"/population_"+currentGen);
+			//Runtime.getRuntime().exec("mkdir "+folderName+"/population_"+currentGen);
+			if( !( new java.io.File( folderName+java.io.File.separator +"population_"+currentGen ).mkdir() ) )
+				System.out.println( "Failed to create directory: " + folderName+java.io.File.separator +"population_"+currentGen );
+			
 			// making species directory
 			for (int i=0; i<species.size(); i++) {
-				Process p=Runtime.getRuntime().exec("mkdir "+folderName+"/population_"+currentGen+"/species_"+i);
+				boolean wasCreated = ( new java.io.File( folderName+java.io.File.separator+"population_"+currentGen+java.io.File.separator+"species_"+i ).mkdir() );
+				if( !wasCreated )
+					System.out.println( "Failed to create directory: " + folderName+java.io.File.separator +"population_"+currentGen );
+				//Process p=Runtime.getRuntime().exec("mkdir "+folderName+"/population_"+currentGen+"/species_"+i);
 				// saving all grns of the species
 				//				System.err.println("Saving species "+i);
 				Species s=species.get(i);
 				s.sortGenomes();
 				Collection<GRNGenome> genomes = s.getGenomes();
 				Iterator<GRNGenome> g=genomes.iterator();
+				/* I think this was only an issue because a runtime command was being used, mkdir() from java.io.File should block until it is created. This had to do with NFS  from clusters though
 				boolean folderNotReady=true;
-				while (folderNotReady) {
+				while ( !wasCreated ) {
 					try {
 						folderNotReady=p.exitValue()!=0;
 						if (folderNotReady) {
 							System.err.println("Error during mkdir proccess. Retrying...");
-							p=Runtime.getRuntime().exec("mkdir "+folderName+"/population_"+currentGen+"/species_"+i);
+							if( !( new java.io.File( folderName+java.io.File.separator+"population_"+currentGen+java.io.File.separator+"species_"+i ).mkdir() ) )
+								System.out.println( "Failed to create directory: " + folderName+java.io.File.separator +"population_"+currentGen );
+							//p=Runtime.getRuntime().exec("mkdir "+folderName+"/population_"+currentGen+"/species_"+i);
 						}
 					} catch (Exception e) {
 						//						System.err.println("Folder not yet ready");
 						Thread.sleep(1);
 					}
-				}
+				}*/
 				for (int j=0; g.hasNext(); j++) {
 					int tries=0;
 					boolean success=false;
 					while (tries<nMaxTries && !success) {
 						try {
-							evaluator.buildGRNFromGenome(g.next()).writeToFile(folderName+"/population_"+currentGen+"/species_"+i+"/genome_"+j+".grn");
+							evaluator.buildGRNFromGenome(g.next()).writeToFile(folderName+java.io.File.separator+"population_"+currentGen+java.io.File.separator+"species_"+i+java.io.File.separator+"genome_"+j+".grn");
 							success=true;
 						} catch (Exception e) {
 							//System.err.println(folderName+"/population_"+currentGen+"/species_"+i+"/genome_"+j+".grn");
@@ -485,11 +501,12 @@ public class Evolver {
 						}
 					}
 					if (!success) {
-						System.err.println("Couldn't write file "+folderName+"/population_"+currentGen+"/species_"+i+"/genome_"+j+".grn");
+						System.err.println("Couldn't write file "+folderName+java.io.File.separator+"population_"+currentGen+java.io.File.separator+"species_"+i+java.io.File.separator+"genome_"+j+".grn");
 					}
 				}
 			}
-			Runtime.getRuntime().exec("./popcompressor.sh "+folderName+" population_"+currentGen);
+			if( new java.io.File( "popcompressor.sh" ).exists() && !( System.getProperty("os.name").toLowerCase().indexOf("win") >= 0 ) )// need script + not windows
+				Runtime.getRuntime().exec("./popcompressor.sh "+folderName+" population_"+currentGen);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -708,7 +725,8 @@ public class Evolver {
 		//e.evaluator=new GRNSinusEvaluator();
 		e.run();
 
-		if( sshTarget.compareTo("") != 0 ) {
+		if( ( sshTarget.compareTo("") != 0 ) 
+				&& !( System.getProperty("os.name").toLowerCase().indexOf("win") >= 0 ) ) {// want to SSH and not windows
 			try {			
 				Runtime.getRuntime().exec("tar czf "+e.experienceName+"_"+e.uuid+".tar.gz "+e.folderName);
 				Runtime.getRuntime().exec("scp "+e.experienceName+"_"+e.uuid+".tar.gz "+sshTarget);

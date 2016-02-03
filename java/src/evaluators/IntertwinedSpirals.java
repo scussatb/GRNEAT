@@ -118,7 +118,7 @@ public class IntertwinedSpirals extends GRNGenomeEvaluator {
 			}
 
 			double target_value = ( targetClass == 0 ? 1 : -1 );
-			double predicted_value  = Math.tanh( grn.proteins.get(2).concentration - grn.proteins.get(3).concentration ); 
+			double predicted_value  = Math.tanh( localGRN.proteins.get(2).concentration - localGRN.proteins.get(3).concentration ); 
 			
 			/*if( fuzzyFitness ) {
 				fitness += Math.abs( target_value - predicted_value ) / 2.0;// because range is [-1,1]

@@ -99,7 +99,8 @@ public class IntertwinedSpirals extends GRNGenomeEvaluator {
 
 		for( int k = 0; k < num_samples * 2; k++ ) {
 
-			GRNModel localGRN=grn.copy();
+			//GRNModel localGRN=grn.copy();
+			GRNModel localGRN=grn;
 
 			// Set inputs
 			localGRN.proteins.get(0).concentration = inputCoef * data[ 3 * k ];
@@ -118,7 +119,7 @@ public class IntertwinedSpirals extends GRNGenomeEvaluator {
 			}
 
 			double target_value = ( targetClass == 0 ? 1 : -1 );
-			double predicted_value  = Math.tanh( grn.proteins.get(2).concentration - grn.proteins.get(3).concentration ); 
+			double predicted_value  = Math.tanh( localGRN.proteins.get(2).concentration - localGRN.proteins.get(3).concentration ); 
 			
 			/*if( fuzzyFitness ) {
 				fitness += Math.abs( target_value - predicted_value ) / 2.0;// because range is [-1,1]
@@ -189,7 +190,9 @@ public class IntertwinedSpirals extends GRNGenomeEvaluator {
 			for (int j=0; j<(int) ( maxy / dy ); j++) {
 				double x=dx*i;
 				double y=dy*j;
-				GRNModel localGRN=grn.copy();
+				//GRNModel localGRN=grn.copy();
+				
+				GRNModel localGRN=grn;
 
 				// Set inputs
 				localGRN.proteins.get(0).concentration = inputCoef * ( x );
@@ -256,7 +259,8 @@ public class IntertwinedSpirals extends GRNGenomeEvaluator {
 
 			// GRN marks
 			if (grn!=null) {
-				GRNModel localGRN=grn.copy();
+				//GRNModel localGRN=grn.copy();
+				GRNModel localGRN=grn;
 				// Set inputs
 				localGRN.proteins.get(0).concentration = inputCoef * data[ 3 * k ];
 				localGRN.proteins.get(1).concentration = inputCoef * data[ 3 * k + 1 ];
@@ -321,9 +325,11 @@ public class IntertwinedSpirals extends GRNGenomeEvaluator {
 
 //		System.out.println(grn.toString());
 
-		GRNModel grn = GRNModel.loadFromFile("/Users/cussat/Recherche/Projets/grnNEAT/GREAT_GIT/launcher018/IntertwinedSpirals/run_15117926140547400/grn_499_-0.2422680412371134.grn");
+		//GRNModel grn = GRNModel.loadFromFile("/Users/cussat/Recherche/Projets/grnNEAT/GREAT_GIT/launcher018/IntertwinedSpirals/run_15117926140547400/grn_499_-0.2422680412371134.grn");
+		GRNModel grn = GRNModel.loadFromFile("/Users/kyle/git/GRNEAT2/IntertwinedSpirals/run_1454529429986992000/grn_11_0.0.grn");		
 		IntertwinedSpirals eval=new IntertwinedSpirals( args );
-		eval.drawSampledImage(grn, "/Users/cussat/Recherche/Projets/grnNEAT/GREAT_GIT/launcher018/ep.png", null, 0.0025);
+		//eval.drawSampledImage(grn, "/Users/kyle/git/GRNEAT2/IntertwinedSpirals/run_1454529429986992000/ep.png", null, 0.0025);
+		eval.drawSpiralImage(grn, "/Users/kyle/git/GRNEAT2/IntertwinedSpirals/run_1454529429986992000/ep_full.png", 0.0025);
 		
 /*		for (int i=0; i<22; i++) {
 			GRNModel grn=GRNModel.loadFromFile("launcher018/Generalization/IS/GREAT/grn_"+i+".grn");

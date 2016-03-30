@@ -665,8 +665,8 @@ public class Evolver {
 		//e.greatActivated=false;
 		
 		if (!customExpName) {
-			//e.evaluator=new CoverageControl( args, e.rng );//new MichalSignalProcessExp3();
-			e.evaluator = new IntertwinedSpirals( args );
+			e.evaluator=new CoverageControl( args, e.rng );//new MichalSignalProcessExp3();
+			//e.evaluator = new IntertwinedSpirals( args );
 			e.experienceName=e.evaluator.name;
 		} else {
 			if( e.experienceName.compareTo("DoublingFrequencyEvaluator") == 0) e.evaluator=new DoublingFrequencyEvaluator();  

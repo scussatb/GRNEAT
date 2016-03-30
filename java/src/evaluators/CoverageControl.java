@@ -4,6 +4,7 @@ import evolver.GRNGenome;
 import grn.GRNModel;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class CoverageControl extends GRNGenomeEvaluator {
 	public double[] dReward;
 
 	//public String mapDirectory = "src/resources/CoverageControl";
-	public String mapDirectory = "resources/CoverageControl";
+	public String mapDirectory = "java" + File.separator + "resources" + File.separator + "CoverageControl";
 	public int verbose=0; // 0 is silent
 
 	public CoverageControl( String args[], Random evolverRNG ) {
@@ -45,15 +46,23 @@ public class CoverageControl extends GRNGenomeEvaluator {
 		long random_seed = 1;
 		//		mapID = rng.nextInt( 100 );// there are 100 maps
 		mapIDs=new boolean[maxMaps];
+		
+		boolean anyMaps = false;
+		
 		for (int k = 0; k < args.length; k++ ) {
 			//			System.err.println(args[k]);
 			if ( args[k].compareTo("stepsPerAction") == 0) {
 				stepsPerAction = Integer.parseInt( args[k+1] );
 			} else if ( args[k].compareTo("mapID") == 0 ) {
 				mapIDs[Integer.parseInt( args[k+1] )-1]=true;
+				anyMaps = true;
 			} else if ( args[k].compareTo("verbose") == 0 ) {
 				verbose = Integer.parseInt(args[k+1]);
 			}
+		}
+		
+		if (!anyMaps) {
+			mapIDs[0] = true;
 		}
 
 		if (verbose>0) {
@@ -78,7 +87,7 @@ public class CoverageControl extends GRNGenomeEvaluator {
 	public void loadMap(int mapID) {
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader( new FileReader( mapDirectory + "/greatmap_coverage_" + mapID + ".txt" ) );
+			br = new BufferedReader( new FileReader( mapDirectory + File.separator + "greatmap_coverage_" + mapID + ".txt" ) );
 
 			String line, allLines = "";					
 

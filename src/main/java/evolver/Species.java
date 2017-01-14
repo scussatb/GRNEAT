@@ -171,7 +171,6 @@ public class Species implements Cloneable {
 	}
 	
 	private class GRNGenomeFitnessComparator implements Comparator<GRNGenome> {
-		@Override
 		public int compare(GRNGenome o1, GRNGenome o2) {
 			double f1, f2;
 			if (!o1.hasBeenEvaluated()) {

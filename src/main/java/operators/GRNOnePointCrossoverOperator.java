@@ -66,7 +66,6 @@ public class GRNOnePointCrossoverOperator extends GRNCrossoverOperator implement
 		return offspring;
 	}
 
-	@Override
 	public int compare(GRNGene o1, GRNGene o2) {
 		return o1.getConnectTo()-o2.getConnectTo();
 	}
